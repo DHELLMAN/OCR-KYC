@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { NavLink, useNavigate } from 'react-router-dom';
 import logo from "../images/logo.png";
 
-const Navbar = () => {
+const Unavbar = () => {
 //   const navigate = useNavigate();
 //   const [admin,setAdmin]=useState(false);
 //   const [search,setSearch] = useState(false);
@@ -88,4 +88,4 @@ const Navbar = () => {
   )
 }
 
-export default Navbar
+export default Unavbar

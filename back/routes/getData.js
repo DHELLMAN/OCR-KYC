@@ -25,12 +25,16 @@ const file = upload.fields([{ name: 'userAadhaarCard', maxCount: 1 }, { name: 'u
 router.post("/",file, async (req, res) => {
 
     console.log("Connected to getdata react");
-    console.log(req.files["userAadhaarCard"]);
+    console.log(req.body);
+
+    const uId = req.body.userId;
+    const userPreviousData = await User.findById({_id: uId})
     
+    console.log(userPreviousData);
+
     const userEntered = {
-        name: req.body.userName,
-        father_name: req.body.fatherName,
-        contact: req.body.userContact,
+        name: userPreviousData.Name,
+        father_name: userPreviousData.Father_Name,
         geoLocation: req.body.userGeoLocation,
         fullAddress: req.body.fullAddress,
         aadhaar: req.files["userAadhaarCard"],
@@ -40,18 +44,13 @@ router.post("/",file, async (req, res) => {
    var aadPath = userEntered.aadhaar[0].path;
    var panPath = userEntered.pan[0].path;
 
-   console.log("before");
   var aadID = await ocrAadhaar(aadPath);
-  console.log(aadID);
-  console.log("middle");
   var panID = await ocrPAN(panPath);
-  console.log(panID);
-  console.log("after");
+
   const fetchedFatherName = panID.parent_name;
   var matchPercent;
   if(userEntered.name)
   {
-      //call function of %matched of user entered name with id fetched name and father's name too.
      matchPercent = matchName(userEntered.name,aadID.name,panID.name,userEntered.father_name,fetchedFatherName);
   }
   else
@@ -59,42 +58,29 @@ router.post("/",file, async (req, res) => {
     console.log("Name on ID does not match");  
     return res.status(401).json("Name on ID does not match");
   }
-
-   await User.findOne({Name:userEntered.name},{Father_Name:userEntered.father_name})
-    .then(async (userExist)=>{
-        if(userExist)
-        {
-            return res.status(422).json(()=>{
-                console.log("User Already Exists");
-            });
-        }
-        var myId = mongoose.Types.ObjectId();
-        const user = new User({
-            _id: myId, 
-            Name:userEntered.name,
-            Father_Name:userEntered.father_name,
-            Contact:userEntered.contact,
-            Geo_Location: userEntered.geoLocation,
-            Address: userEntered.fullAddress,
-            Aadhaar_Image: userEntered.aadhaar,
-            Pan_Image: userEntered.pan,
-            Aadhaar_UID: aadID.UID,
-            Pan_UID: panID.UID,
-            Aadhaar_Name_Match: matchPercent.aadNameMatch,
-            Pan_Name_Match: matchPercent.panNameMatch,
-            Father_Name_Match: matchPercent.fatherNameMatch
    
-        });
+  await User.findOneAndUpdate(
+            {
+            _id: uId
+            },
+            {
+                Geo_Location: userEntered.geoLocation,
+                Address: userEntered.fullAddress,
+                Aadhaar_Image: userEntered.aadhaar,
+                Pan_Image: userEntered.pan,
+                Aadhaar_UID: aadID.UID,
+                Pan_UID: panID.UID,
+                Aadhaar_Name_Match: matchPercent.aadNameMatch,
+                Pan_Name_Match: matchPercent.panNameMatch,
+                Father_Name_Match: matchPercent.fatherNameMatch
+            }
+        ).then(()=>{
+            
+            console.log("Data saved successfully");
+            return res.status(201).json("Data saved successfully");
 
-       await user.save().then(()=>{
-           console.log("Data saved successfully");
-           return res.status(201).json({
-            ObjectId: myId ,   
-            message:"Data saved successfully"});
-        }).catch((err)=> {
-            console.log(err);
+        }).catch((err)=>{
            return res.status(500).json(err);
-        });  
-});
+        });
 });
 module.exports = router;

@@ -1,27 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import ocrlogo from "../images/ocrLogo.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Navbar from "./Navbar";
 
 const InputData = () => {
 
     const navigate = useNavigate();
-    // const [popup,setPopup] = useState(false);
-    const [fA, setfA] = useState();
+    const [address, setAddress] = useState();
+    const id = useParams();
     const [user,setUser] = useState({
-      name: "",
-      fName: "",
-      contact: null,
-      // userAadhaar: "",
-      // userPAN: "",
-      geoLocation: ""
+      userAadhaar: "",
+      userPan: "",
+      geoLocation: "",
     });  
   
-    //const [file,setFile] = useState();
-    let name, value, id;
     
+    let name, value;
+
     const takeInput = (event) => {
       console.log(event);
       name = event.target.name;
@@ -36,23 +34,17 @@ const InputData = () => {
       
         const aad = document.querySelector('#aadhaar').files[0];
         const pan = document.querySelector('#pan').files[0];
-        
+
         const formData = new FormData();
-        formData.append("userName",user.name);
-        formData.append("fatherName",user.fName);
-        formData.append("userContact",user.contact);
+        formData.append("userId",id.id);
         formData.append("userAadhaarCard",aad);
         formData.append("userPanCard",pan);
         formData.append("userGeoLocation",user.geoLocation);
-        console.log({fA});
-        formData.append("fullAddress",{fA}.fA);
+        formData.append("fullAddress",address);
         
         await axios.post("/post",formData)
         .then((res)=>{
-          console.log(res.data.ObjectId);
-          console.log(res.status);
-          id = res.data.ObjectId;  
-
+         
         if(res.status === 401 || !res)
         {
           window.alert("Data could not be sent. Try again after some time.");
@@ -60,9 +52,9 @@ const InputData = () => {
         }
         else
         {
-          window.alert(`Welcome ${user.name}. Your data has been stored successfully`);
+          window.alert(res.data);
           window.alert("In the next step, your image will be captured. Please be in proper lighted area.\nThank You");
-          navigate("/clickPicture/"+`${id}`);
+          navigate(`/clickPicture/${id.id}`);
         }
         }).catch ((err)=> {
           console.log(err);
@@ -93,11 +85,13 @@ const InputData = () => {
         console.log(add.data.address);
         const { suburb, city_district, city, state, country, postcode } = add.data.address;
        const a = `${suburb}, ${city_district}, ${city}, ${state}, ${country}. Zipcode: ${postcode}`;
-       setfA(a);
+
+       setAddress(a);
       }
 
       return (
         <>
+        <Navbar/>
           <section className="signup">
             <div className="container mt-5">
               <div className="signup-content">
@@ -105,43 +99,28 @@ const InputData = () => {
                   <h2 className="form-title pl-5"> Welcome to OCR technology</h2>
                   <form className="register-form" id="register-form" method="post" /*action="../../post"*/  encType="multipart/form-data">
                   
-                    <div className="form-group"> 
-                        <label htmlFor="username">
-                          <i class="zmdi zmdi-male-alt material-icons-name"></i>
-                        </label>
-                        <input type='text' id="username" placeholder="Enter Your name" name="name" onChange={takeInput} value={user.name}/>
-                    </div>
-                    <div className="form-group"> 
-                        <label htmlFor="father">
-                          <i class="zmdi zmdi-male-alt material-icons-name"></i>
-                        </label>
-                        <input type='text' id="father" placeholder="Enter Your Father's name" name="fName" onChange={takeInput} value={user.fName} />
-                    </div>
-                    <div className="form-group"> 
-                        <label htmlFor="mobile">
-                          <i class="zmdi zmdi-phone material-icons-name"></i>
-                        </label>
-                        <input type='number' id="mobile" placeholder="Enter Contact Number" name="contact" onChange={takeInput} value={user.contact} />
-                    </div>
+                    <center>
+                      <h6>Please upload your Aadhaar and Pan Card</h6>
+                    </center>
                     <div className="form-group">
                         <label htmlFor="aadhaar">
                           <i class="zmdi zmdi-file material-icons-name"></i>
                           {/* Upload Aadhaar: */}
                         </label>
-                        <input type="file" accept=".jpg" id="aadhaar"  name="userAadhaarCard" onChange={takeInput} value={user.userAadhaar}/>
+                        <input type="file" accept=".jpg" id="aadhaar"  name="userAadhaar" onChange={takeInput} value={user.userAadhaar}/>
                     </div>
                     <div className="form-group">
                         <label htmlFor="pan">
                           <i class="zmdi zmdi-file material-icons-name"></i>
                           {/* Upload PAN: */}
                         </label>
-                        <input type="file" accept=".jpg" id="pan"  name="userPanCard" onChange={takeInput} value={user.userPAN}/>
+                        <input type="file" accept=".jpg" id="pan"  name="userPan" onChange={takeInput} value={user.userPan}/>
                     </div>
                     <div className="form-group form-button">
                         <label htmlFor="fetch">
                         <i class="zmdi zmdi-gps-dot material-icons-name"></i>
                         </label>                        
-                        <input type='text' id="fetch" placeholder="Press 'Fetch Location' Button to get your location" name="geoLocation" /*onChange={takeInput}*/ defaultValue={user.geoLocation}/>
+                        <input type='text' id="fetch" placeholder="Press 'Fetch Location' Button to get your location" name="geoLocation" /*onChange={takeInput}*/ value={user.geoLocation}/>
                         
                     </div>
                     <div className="form-group form-button">

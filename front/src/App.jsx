@@ -13,22 +13,22 @@ import AdminPanel from "./Components/AdminPanel";
 import AdminView from "./Components/AdminView";
 import Login from "./Components/Login";
 import SearchAdminPanel from "./Components/SearchAdminPanel";
+import SignUp from "./Components/SignUp";
+import UserLogin from "./Components/UserLogin";
 
-// import Test from "./Test";
 
 const App = () => {
     
     return(
         <>
-        {/* <Navbar/> */}
         <Routes>
             <Route exact path="/" element={<Home/>} />
-            <Route path="/inputData" element={<InputData/>} />
+            <Route path="/signUp" element={<SignUp/>} />
+            <Route path="/userLogin" element={<UserLogin/>} />
+            <Route path="/inputData/:id" element={<InputData/>} />
             <Route path="/clickPicture/:id" element={<ClickPicture/>} />
             <Route path="/outputResults/:id" element={<OutputResults/>}/>
             <Route path="/login" element={<Login/>}/>
-            //user registration route
-            //user login router
             <Route path="/adminPanel" element={<AdminPanel/>}/>
             <Route path="/adminView/:id" element={<AdminView/>}/>
             <Route path="/searchAdminPanel/:query/:searchString" element={<SearchAdminPanel/>}/>

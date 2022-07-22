@@ -27,6 +27,8 @@ const Login = () => {
             formData.append("userName",user.userName);
             formData.append("password",user.password);
 
+            console.log(formData,"form here");
+
             await axios.post("/login",formData).then((res)=>{
             
                 if(res.status == 201)

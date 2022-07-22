@@ -17,41 +17,36 @@ const userSchema = new mongoose.Schema({
         type: Number,
         required:true
     },
-    Geo_Location: {
+    Password: {
         type: String,
         required:true
+    },
+    Geo_Location: {
+        type: String,
     },
     Address: {
         type: String,
-        required:true
     },
     Aadhaar_Image: {
         type: Object,
-        required:true
     },
     Pan_Image: {
         type: Object,
-        required:true
     },
     Aadhaar_UID: {
         type: String,
-        required:true
     },
     Pan_UID: {
         type: String,
-        required:true
     },
     Aadhaar_Name_Match: {
         type: String,
-        required: true
     },
     Pan_Name_Match: {
         type: String,
-        required: true
     },
     Father_Name_Match: {
         type: String,
-        required: true
     },
     User_Image: {
         type: Object,

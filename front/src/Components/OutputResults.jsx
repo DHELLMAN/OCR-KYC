@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import {useEffect} from "react"
+import Navbar from "./Navbar";
 
 const OutputResults = () => {
     const [doc,setDoc] = useState("");
@@ -31,6 +32,7 @@ console.log(doc && doc);
   
 return (
     <>  
+    <Navbar/>
         <div className="container emp-profile">  
             
                 <div className="row ml-3">

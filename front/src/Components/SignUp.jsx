@@ -1,25 +1,22 @@
 import { useState } from "react";
 import React from "react";
 import ocrlogo from "../images/ocrLogo.png";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
+import Unavbar from "./Unavbar";
 
 const SignUp = () => {
 
     const navigate = useNavigate();
-    // const [popup,setPopup] = useState(false);
-    const [fA, setfA] = useState();
     const [user,setUser] = useState({
-      name: "",
-      fName: "",
-      contact: null,
-      // userAadhaar: "",
-      // userPAN: "",
-      geoLocation: ""
+      Name: "",
+      Father_Name: "",
+      Contact: null,
+      Password: "",
+      Confirm_Password: ""
     });  
   
-    //const [file,setFile] = useState();
     let name, value, id;
     
     const takeInput = (event) => {
@@ -33,66 +30,36 @@ const SignUp = () => {
     
     const sendData = async  (event)=>{
         event.preventDefault();
-      
-        const formData = new FormData();
-        formData.append("userName",user.name);
-        formData.append("fatherName",user.fName);
-        formData.append("userContact",user.contact);
-        formData.append("userGeoLocation",user.geoLocation);
-        console.log({fA});
-        formData.append("fullAddress",{fA}.fA);
-        
-        await axios.post("/post",formData)
-        .then((res)=>{
-          console.log(res.data.ObjectId);
-          console.log(res.status);
-          id = res.data.ObjectId;  
 
-        if(res.status === 401 || !res)
+        const { Name, Father_Name, Contact, Password} = user;
+
+        await axios.post("/register",{
+          Name,
+          Father_Name,
+          Contact,
+          Password
+        })
+        .then((res)=>{
+          
+        if(!res.data.status)
         {
           window.alert("Data could not be sent. Try again after some time.");
           console.log("Error hai");
         }
         else
         {
-          window.alert(`Welcome ${user.name}. Your data has been stored successfully`);
-          window.alert("In the next step, your image will be captured. Please be in proper lighted area.\nThank You");
-          navigate("/clickPicture/"+`${id}`);
+          window.alert(`Welcome ${Name}. You have succesfully registered yourself. Kindly Login.`);
+          navigate("/userLogin");
         }
         }).catch ((err)=> {
           console.log(err);
         })
        
     }
-
-    const getLocation= (event) => {
-     
-        event.preventDefault();
-        // setPopup(true);
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(showPosition);
-        } else {
-          alert("Geolocation is not supported by this browser.");
-        }
-      }
-      
-    const showPosition = async (position) => {
-        var location = "Latitude: " + position.coords.latitude +
-        " Longitude: " + position.coords.longitude;
-        
-        var x = document.getElementById("fetch");
-        name = x.name;
-        setUser({...user,[name]:location});
-
-        const add = await axios.request(`http://nominatim.openstreetmap.org/reverse?format=json&lat=${position.coords.latitude}&lon=${position.coords.longitude}&zoom=18&addressdetails=1`);
-        console.log(add.data.address);
-        const { suburb, city_district, city, state, country, postcode } = add.data.address;
-       const a = `${suburb}, ${city_district}, ${city}, ${state}, ${country}. Zipcode: ${postcode}`;
-       setfA(a);
-      }
-
+    
       return (
         <>
+        <Unavbar/>
           <section className="signup">
             <div className="container mt-5">
               <div className="signup-content">
@@ -104,46 +71,37 @@ const SignUp = () => {
                         <label htmlFor="username">
                           <i class="zmdi zmdi-male-alt material-icons-name"></i>
                         </label>
-                        <input type='text' id="username" placeholder="Enter Your name" name="name" onChange={takeInput} value={user.name}/>
+                        <input type='text' id="username" placeholder="Enter Your name" name="Name" onChange={takeInput} value={user.Name}/>
                     </div>
                     <div className="form-group"> 
                         <label htmlFor="father">
                           <i class="zmdi zmdi-male-alt material-icons-name"></i>
                         </label>
-                        <input type='text' id="father" placeholder="Enter Your Father's name" name="fName" onChange={takeInput} value={user.fName} />
+                        <input type='text' id="father" placeholder="Enter Your Father's name" name="Father_Name" onChange={takeInput} value={user.Father_Name} />
                     </div>
                     <div className="form-group"> 
                         <label htmlFor="mobile">
                           <i class="zmdi zmdi-phone material-icons-name"></i>
                         </label>
-                        <input type='number' id="mobile" placeholder="Enter Contact Number" name="contact" onChange={takeInput} value={user.contact} />
+                        <input type='number' id="mobile" placeholder="Enter Contact Number" name="Contact" onChange={takeInput} value={user.Contact} />
                     </div>
+
                     <div className="form-group">
-                        <label htmlFor="aadhaar">
-                          <i class="zmdi zmdi-file material-icons-name"></i>
-                          {/* Upload Aadhaar: */}
+                        <label htmlFor="pass">
+                          <i class="zmdi zmdi-lock"></i>
                         </label>
-                        <input type="file" accept=".jpg" id="aadhaar"  name="userAadhaarCard" onChange={takeInput} value={user.userAadhaar}/>
+                        <input type="password" id="pass" placeholder='Password' name='Password' onChange={takeInput} />  
                     </div>
+
                     <div className="form-group">
-                        <label htmlFor="pan">
-                          <i class="zmdi zmdi-file material-icons-name"></i>
-                          {/* Upload PAN: */}
+                        <label htmlFor="confirmpass">
+                          <i class="zmdi zmdi-shield-check"></i>
                         </label>
-                        <input type="file" accept=".jpg" id="pan"  name="userPanCard" onChange={takeInput} value={user.userPAN}/>
+                        <input type="password" id="confirmpass" placeholder='Confirm Password' name='Confirm_Password' onChange={takeInput} />
                     </div>
-                    <div className="form-group form-button">
-                        <label htmlFor="fetch">
-                        <i class="zmdi zmdi-gps-dot material-icons-name"></i>
-                        </label>                        
-                        <input type='text' id="fetch" placeholder="Press 'Fetch Location' Button to get your location" name="geoLocation" /*onChange={takeInput}*/ defaultValue={user.geoLocation}/>
-                        
-                    </div>
-                    <div className="form-group form-button">
-                       <button onClick={getLocation}>Fetch My Location</button>
-                    </div>
-                    <div className="form-group form-button">
-                        <input type="submit" onClick={sendData} name="signup" id="signup" className="form-submit" value="Submit"/>
+                    
+                    <div className="form-group form-button mb-3">
+                        <input type="submit" onClick={sendData} name="signup" id="signup" className="form-submit" value="Create User"/>
                     </div>    
                   </form>
                 </div>
@@ -152,6 +110,7 @@ const SignUp = () => {
                     <img src={ocrlogo} alt="ocr logo" />
                   </figure>
                   <p className="signup-immage-link"> OPTICAL CHARACTER RECOGNITION</p>
+                  <span>Already Have an Account ? <Link to="/userLogin">Login</Link></span>
                 </div>
               </div>
             </div>

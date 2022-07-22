@@ -98,16 +98,16 @@ const Navbar = () => {
             </li> : null
             }
             <li className="nav-item">
-              <NavLink className="nav-link" to="/">Home <span className="sr-only">(current)</span></NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/inputData">Input Data</NavLink>
+              <NavLink className="nav-link" to="/inputData">Input Data<span className="sr-only">(current)</span></NavLink>
             </li>
             <li className="nav-item">
               <NavLink className="nav-link" to="/clickPicture">Click Picture</NavLink>
             </li>
             <li className="nav-item">
               <NavLink className="nav-link" to="/outputResults">Dashboard</NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/">Log Out </NavLink>
             </li>
           </ul>
         </div>

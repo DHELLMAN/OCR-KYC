@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "../App.css";
 import * as tf from '@tensorflow/tfjs';
 import * as blazeface from "@tensorflow-models/blazeface";
+import Navbar from "./Navbar";
 
 
 const ClickPicture = () => {
@@ -157,8 +158,9 @@ const ClickPicture = () => {
            };     
              
 
-    return (
-        <>
+           return (
+               <>
+               <Navbar/>
             {/* <div className="container mt-5">
                 <div className="signup-content">
                    <h2 id="line">{line}</h2>
@@ -176,7 +178,6 @@ const ClickPicture = () => {
                 </div>
                 <img src={dataUrl} alt="" />
             </div> */}
-
 
             <div className="container mt-5">                
               <div id="notfound1">
